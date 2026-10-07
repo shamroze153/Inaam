@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Inaam Sheermaal House</title>
+<meta name="description" content="Inaam Sheermaal House: tandoor-fresh sheermaal, taftan, roghni naan aur kulcha. Zafran, desi ghee aur garam tandoor.">
+<meta name="theme-color" content="#120a06">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Cormorant+Garamond:ital,wght@1,500;1,600&family=Manrope:wght@400;500;700;800&family=Noto+Nastaliq+Urdu:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="loader" role="status" aria-live="polite">
+  <div class="ld-mark" lang="ur" dir="rtl">انعام</div>
+  <div class="ld-bar"><i></i></div>
+  <div class="ld-text">Tandoor garam ho raha hai…</div>
+</div>
+
+<canvas id="gl" aria-hidden="true"></canvas>
+
+<header class="nav">
+  <a class="brand" href="#hero" aria-label="Inaam Sheermaal House">
+    <span class="brand-ur" lang="ur" dir="rtl">انعام</span>
+    <span class="brand-en">INAAM<small>SHEERMAAL HOUSE</small></span>
+  </a>
+  <nav class="links" aria-label="Sections">
+    <a href="#story" data-nav="story">Kahani</a>
+    <a href="#lineup" data-nav="lineup">Lineup</a>
+    <a href="#combo" data-nav="combo">Nashta Box</a>
+    <a href="#menu" data-nav="menu">Menu</a>
+    <a href="#visit" data-nav="visit">Visit</a>
+  </nav>
+  <button class="btn btn-solid nav-order" data-open-cart>Order <span class="badge" data-cart-count>0</span></button>
+</header>
+
+<main>
+  <section id="hero" class="hero" data-section>
+    <div class="hero-copy">
+      <p class="eyebrow reveal"><span class="pulse"></span>Tandoor-fresh · har subah</p>
+      <h1 class="hero-ur reveal" lang="ur" dir="rtl">انعام شیرمال ہاؤس</h1>
+      <p class="hero-title reveal">HAR SHEERMAAL<br><em>ek inaam.</em></p>
+      <p class="hero-sub reveal">Zafran ka rang, desi ghee ki khushboo aur garam tandoor ki aag. Sunehri, naram aur halki si meethi, seedha tandoor se aap ki plate tak.</p>
+      <div class="cta-row reveal">
+        <a class="btn btn-solid" href="#menu">Menu dekhein</a>
+        <button class="btn btn-ghost" data-add="sheermaal">+ Sheermaal order mein</button>
+      </div>
+    </div>
+    <ul class="hero-meta reveal">
+      <li><b>8</b><span>qisam ki roti</span></li>
+      <li><b>1</b><span>garam tandoor</span></li>
+      <li><b>∞</b><span>mohabbat</span></li>
+    </ul>
+    <p class="hero-hint reveal"><span class="hint-d">Roti ko ghumaiye ya us par click karein · ghoomti rotiyon par click karein</span><span class="hint-m">Roti ko ghumaiye · ghoomti rotiyon par tap karein</span></p>
+    <a class="scroll-cue" href="#story"><span>Scroll karein, dekhiye kaise banta hai</span><i></i></a>
+  </section>
+
+  <section id="story" class="story" data-section>
+    <div class="sticky">
+      <span class="kicker story-kicker">Kahani · aate se tandoor tak</span>
+      <ol class="steps">
+        <li class="step" data-step="0">
+          <span class="num">01 / Ajza</span>
+          <h2>Pehle, sirf <em>asli</em> cheezein.</h2>
+          <p>Maida, khalis doodh, desi ghee, zafran ke dhaage, elaichi aur thori si cheeni. Bas itna hi.</p>
+          <ul class="chips"><li>Maida</li><li>Doodh</li><li>Desi ghee</li><li>Zafran</li><li>Elaichi</li><li>Cheeni</li></ul>
+        </li>
+        <li class="step" data-step="1">
+          <span class="num">02 / Goondhna</span>
+          <h2>Haath se goondha, <em>sabr</em> se rakha.</h2>
+          <p>Aata tab tak goondha jata hai jab tak resham jaisa naram na ho jaye. Phir usay araam diya jata hai.</p>
+        </li>
+        <li class="step" data-step="2">
+          <span class="num">03 / Belna aur nishaan</span>
+          <h2>Gol bela, kaante se <em>nishaan</em>.</h2>
+          <p>Yeh nanhe nishaan sheermaal ki pehchaan hain. In ki wajah se roti tandoor mein ghubbara nahi banti, barabar pakti hai.</p>
+        </li>
+        <li class="step" data-step="3">
+          <span class="num">04 / Tandoor</span>
+          <h2>Mitti ke tandoor ki <em>aag</em>.</h2>
+          <p>Garam tandoor ki deewar par chand minton mein rang doodhiya se sunehra ho jata hai.</p>
+        </li>
+        <li class="step" data-step="4">
+          <span class="num">05 / Zafrani lep</span>
+          <h2>Zafrani ghee ka lep. <em>Inaam tayyar.</em></h2>
+          <p>Tandoor se nikalte hi upar zafran aur ghee ka lep, jo isay woh mashhoor chamak deta hai.</p>
+          <button class="btn btn-solid" data-add="sheermaal">Abhi order karein</button>
+        </li>
+      </ol>
+      <div class="story-rail" aria-hidden="true"><i></i><span></span><span></span><span></span><span></span><span></span></div>
+    </div>
+  </section>
+
+  <section id="lineup" class="lineup" data-section>
+    <div class="snaps" aria-hidden="true"></div>
+    <div class="sticky">
+      <div class="lu-head">
+        <span class="kicker">The Tandoor Lineup</span>
+        <h2>Har mood ki <em>roti</em>.</h2>
+      </div>
+      <div class="lu-count"><b data-lu-index>01</b><span> / 08</span></div>
+      <nav class="lu-dots" aria-label="Rotiyan" data-lu-dots></nav>
+      <div class="lu-label">
+        <button class="arrow" data-lu-prev aria-label="Pichhli roti">
+          <svg viewBox="0 0 24 24" width="22" height="22"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+        <div class="lu-name">
+          <span class="lu-ur" lang="ur" dir="rtl" data-lu-ur>شیرمال</span>
+          <span class="lu-en" data-lu-en>SHEERMAAL</span>
+          <span class="lu-tag" data-lu-tag></span>
+        </div>
+        <button class="arrow" data-lu-next aria-label="Agli roti">
+          <svg viewBox="0 0 24 24" width="22" height="22"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="lu-actions">
+        <button class="btn btn-solid" data-lu-open>Tafseel dekhein</button>
+        <span class="lu-hint">Drag karein, scroll karein ya roti par click karein</span>
+      </div>
+
+      <article class="detail" aria-hidden="true" data-detail>
+        <button class="detail-close" data-lu-close aria-label="Lineup par wapas">
+          <svg viewBox="0 0 24 24" width="18" height="18"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+        <span class="kicker" data-d-kicker>01 / 08</span>
+        <h3 class="d-en" data-d-en>SHEERMAAL</h3>
+        <div class="d-ur" lang="ur" dir="rtl" data-d-ur>شیرمال</div>
+        <p class="d-tag" data-d-tag></p>
+        <p class="d-desc" data-d-desc></p>
+        <div class="d-specs" data-d-specs></div>
+        <ul class="chips" data-d-ing></ul>
+        <div class="d-buy">
+          <span class="d-price" data-d-price></span>
+          <button class="btn btn-solid" data-d-add>Order mein shamil karein</button>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section id="combo" class="combo" data-section>
+    <div class="sticky">
+      <div class="combo-copy">
+        <span class="kicker">Deal · Shahi Nashta Box</span>
+        <h2>Subah ka <em>shahi</em> nashta.</h2>
+        <p class="combo-sub">Dabba kholiye. Andar garam sheermaal, makhni kulcha aur mitti ke kulhad mein doodh patti.</p>
+        <ul class="combo-list">
+          <li data-c="0"><b>2×</b>Sheermaal<span lang="ur" dir="rtl">شیرمال</span></li>
+          <li data-c="1"><b>1×</b>Makhni Kulcha<span lang="ur" dir="rtl">مکھنی کلچہ</span></li>
+          <li data-c="2"><b>1×</b>Kulhad Chai<span lang="ur" dir="rtl">کلہڑ چائے</span></li>
+        </ul>
+        <div class="combo-buy" data-c="3">
+          <span class="price"><s data-combo-was></s><b data-combo-price></b></span>
+          <button class="btn btn-solid" data-add="nashta">Box order karein</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="marquee" aria-hidden="true"><div class="track" data-marquee></div></div>
+
+  <section id="menu" class="menu" data-section>
+    <div class="menu-head">
+      <div>
+        <span class="kicker">Poora menu</span>
+        <h2>The <em>lineup</em>.</h2>
+      </div>
+      <div class="tabs" role="tablist" aria-label="Menu filter">
+        <button role="tab" aria-selected="true" class="on" data-filter="all">Sab</button>
+        <button role="tab" aria-selected="false" data-filter="meetha">Meethi</button>
+        <button role="tab" aria-selected="false" data-filter="namkeen">Namkeen</button>
+        <button role="tab" aria-selected="false" data-filter="deal">Deals aur chai</button>
+      </div>
+    </div>
+    <div class="grid" data-menu-grid></div>
+  </section>
+
+  <section id="visit" class="visit" data-section>
+    <div class="visit-ur" lang="ur" dir="rtl">انعام شیرمال ہاؤس</div>
+    <p class="visit-line">Tandoor se, <em>mohabbat</em> se.</p>
+    <div class="visit-grid">
+      <div><span class="kicker">Pata</span><p data-site="address"></p></div>
+      <div><span class="kicker">Timings</span><p data-site="hours"></p></div>
+      <div><span class="kicker">Phone / WhatsApp</span><p data-site="phoneDisplay"></p></div>
+    </div>
+    <a class="btn btn-solid btn-big" data-wa-link target="_blank" rel="noopener">WhatsApp par order karein</a>
+    <footer class="foot">© <span data-year></span> Inaam Sheermaal House</footer>
+  </section>
+</main>
+
+<button class="cart-fab" data-open-cart aria-label="Order dekhein">
+  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8L5 8zm4 0V6a3 3 0 0 1 6 0v2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+  <span data-cart-count>0</span>
+  <span class="cart-total" data-cart-total></span>
+</button>
+
+<div class="cart-scrim" data-close-cart></div>
+<aside class="cart" aria-hidden="true" aria-label="Aap ka order">
+  <div class="cart-head">
+    <h3>Aap ka order</h3>
+    <button class="icon-btn" data-close-cart aria-label="Band karein">
+      <svg viewBox="0 0 24 24" width="18" height="18"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+  <ul class="cart-list" data-cart-list></ul>
+  <div class="cart-foot">
+    <div class="cart-sum"><span>Total</span><b data-cart-sum></b></div>
+    <a class="btn btn-solid" data-cart-send target="_blank" rel="noopener">WhatsApp par order bhejein</a>
+    <p class="cart-note">Order WhatsApp par confirm hota hai.</p>
+  </div>
+</aside>
+
+<div class="toast" data-toast role="status" aria-live="polite"></div>
+<div class="orbit-tip" aria-hidden="true"><b data-tip-en></b><span lang="ur" dir="rtl" data-tip-ur></span><small>Click karein</small></div>
+
+<script type="module" src="main.js"></script>
+</body>
+</html>

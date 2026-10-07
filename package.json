@@ -1,0 +1,15 @@
+{
+  "name": "inaam-sheermaal-website",
+  "version": "1.0.0",
+  "description": "Inaam Sheermaal House - 3D restaurant website (Three.js)",
+  "scripts": {
+    "build": "node build.mjs",
+    "preview": "npx serve dist"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "three": "^0.186.1"
+  },
+  "private": true,
+  "type": "module"
+}

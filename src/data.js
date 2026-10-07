@@ -1,0 +1,116 @@
+// Saari editable maloomat yahan hai.
+// PLACEHOLDER: number, pata, timings aur prices sample hain - asal maloomat se badlein.
+export const SITE = {
+  nameEn: 'Inaam Sheermaal House',
+  nameUr: 'انعام شیرمال ہاؤس',
+  whatsapp: '920000000000', // country code ke saath, + aur dash ke baghair
+  phoneDisplay: '0300 000 0000',
+  address: 'Dukaan ka pata, Bazaar, Shehar',
+  hours: 'Roz subah 6 baje se raat 11 baje tak',
+  currency: 'Rs.',
+};
+
+// shape: round | oval | tear. Sizes are in bread units (radius ~1).
+export const BREADS = [
+  {
+    id: 'sheermaal', en: 'Sheermaal', ur: 'شیرمال',
+    tag: 'Zafrani · halka meetha · bohat naram',
+    desc: 'Doodh mein goondha, zafran se rangha, upar se desi ghee ka lep. Chai ke saath ho ya qorme ke saath, har nivala ek inaam.',
+    ingredients: ['Maida', 'Khalis doodh', 'Desi ghee', 'Zafran', 'Elaichi'],
+    specs: { Mithas: 4, Khastapan: 2, Narmi: 5 },
+    price: 120, cat: 'meetha',
+    theme: { accent: '#f6a133', glow: '#ff7a14', base: '#2b1304' },
+    geo: { shape: 'round', radius: 1, height: 0.17, puff: 0.28, bumps: 0.01 },
+    mat: { roughness: 0.42, clearcoat: 0.75, clearcoatRoughness: 0.28, bumpScale: 2.2 },
+  },
+  {
+    id: 'taftan', en: 'Taftan', ur: 'تافتان',
+    tag: 'Khamiri · elaichi · khashkhash',
+    desc: 'Khamiri aata, doodh aur elaichi. Upar khashkhash aur ungliyon ke nishaan. Tandoor se nikalte hi khushboo poore bazaar mein phail jati hai.',
+    ingredients: ['Khamiri aata', 'Doodh', 'Anda', 'Elaichi', 'Khashkhash'],
+    specs: { Mithas: 3, Khastapan: 2, Narmi: 4 },
+    price: 100, cat: 'meetha',
+    theme: { accent: '#f08a6b', glow: '#e4573d', base: '#2a0f0c' },
+    geo: { shape: 'round', radius: 1.06, height: 0.15, puff: 0.22, bumps: 0.012 },
+    mat: { roughness: 0.5, clearcoat: 0.4, clearcoatRoughness: 0.35, bumpScale: 2.4 },
+  },
+  {
+    id: 'roghni', en: 'Roghni Naan', ur: 'روغنی نان',
+    tag: 'Til ki barsaat · sunehri chamak',
+    desc: 'Roghan ka lep aur upar til ki barsaat. Bahar se sunehri chamak, andar se naram. Nihari aur paye ka pakka saathi.',
+    ingredients: ['Maida', 'Dahi', 'Roghan', 'Safaid til'],
+    specs: { Mithas: 1, Khastapan: 3, Narmi: 4 },
+    price: 80, cat: 'namkeen',
+    theme: { accent: '#f0c24f', glow: '#e89a1c', base: '#261a05' },
+    geo: { shape: 'oval', radius: 1.02, height: 0.14, puff: 0.18, bumps: 0.012 },
+    mat: { roughness: 0.38, clearcoat: 0.6, clearcoatRoughness: 0.3, bumpScale: 2.6 },
+  },
+  {
+    id: 'kulcha', en: 'Makhni Kulcha', ur: 'مکھنی کلچہ',
+    tag: 'Phoola hua · makhan se chupra',
+    desc: 'Phoola hua naram kulcha, tandoor se nikalte hi makhan se chupra hua. Cholay ke saath subah ka asli maza.',
+    ingredients: ['Maida', 'Dahi', 'Makhan', 'Namak'],
+    specs: { Mithas: 1, Khastapan: 1, Narmi: 5 },
+    price: 70, cat: 'namkeen',
+    theme: { accent: '#f7d77a', glow: '#e8a53a', base: '#241806' },
+    geo: { shape: 'round', radius: 0.86, height: 0.22, puff: 0.32, bumps: 0.014 },
+    mat: { roughness: 0.55, clearcoat: 0.35, clearcoatRoughness: 0.4, bumpScale: 1.8 },
+  },
+  {
+    id: 'bakarkhani', en: 'Bakarkhani', ur: 'باقرخانی',
+    tag: 'Parat dar parat · khasta',
+    desc: 'Parat dar parat khasta. Chai mein dubo kar khaiye, har bite mein tootti hui teh aur ghee ki khushboo.',
+    ingredients: ['Maida', 'Ghee', 'Doodh', 'Til', 'Cheeni'],
+    specs: { Mithas: 2, Khastapan: 5, Narmi: 1 },
+    price: 60, cat: 'meetha',
+    theme: { accent: '#c9dc86', glow: '#9cbc4e', base: '#121a08' },
+    geo: { shape: 'round', radius: 0.8, height: 0.13, puff: 0.12, bumps: 0.008 },
+    mat: { roughness: 0.58, clearcoat: 0.25, clearcoatRoughness: 0.5, bumpScale: 3.0 },
+  },
+  {
+    id: 'lachha', en: 'Lachha Paratha', ur: 'لچھا پراٹھا',
+    tag: 'Ghee ke lachhe · kurkura',
+    desc: 'Ghee mein lipte lachhe. Bahar se kurkura, andar se naram parat. Anday, chai ya qeema, sab ke saath chalta hai.',
+    ingredients: ['Atta', 'Desi ghee', 'Namak'],
+    specs: { Mithas: 1, Khastapan: 4, Narmi: 3 },
+    price: 90, cat: 'namkeen',
+    theme: { accent: '#ff9a3c', glow: '#ff6a00', base: '#2a1203' },
+    geo: { shape: 'round', radius: 1.02, height: 0.085, puff: 0.1, bumps: 0.008 },
+    mat: { roughness: 0.4, clearcoat: 0.55, clearcoatRoughness: 0.3, bumpScale: 3.2 },
+  },
+  {
+    id: 'roti', en: 'Tandoori Roti', ur: 'تندوری روٹی',
+    tag: 'Gandum ka asli zaiqa',
+    desc: 'Gandum ka asli aata, tandoor ke daagh, garam garam. Har khane ki buniyad, aur hamari sab se sasti mohabbat.',
+    ingredients: ['Gandum ka atta', 'Paani', 'Namak'],
+    specs: { Mithas: 0, Khastapan: 2, Narmi: 3 },
+    price: 25, cat: 'namkeen',
+    theme: { accent: '#e0b276', glow: '#b97a35', base: '#1d1309' },
+    geo: { shape: 'round', radius: 1.0, height: 0.07, puff: 0.08, bumps: 0.01 },
+    mat: { roughness: 0.82, clearcoat: 0, clearcoatRoughness: 0.6, bumpScale: 2.6 },
+  },
+  {
+    id: 'kalonji', en: 'Kalonji Naan', ur: 'کلونجی نان',
+    tag: 'Kalonji · tandoor ke phaphole',
+    desc: 'Kalonji ke daane aur tandoor ke kaale phaphole. Khushbudar, halka dhuwein wala zaiqa jo karahi ke saath aur bhi khilta hai.',
+    ingredients: ['Maida', 'Dahi', 'Kalonji', 'Makhan'],
+    specs: { Mithas: 0, Khastapan: 3, Narmi: 4 },
+    price: 70, cat: 'namkeen',
+    theme: { accent: '#ff8a5c', glow: '#ff4a1c', base: '#170c09' },
+    geo: { shape: 'tear', radius: 1.0, height: 0.11, puff: 0.12, bumps: 0.012 },
+    mat: { roughness: 0.62, clearcoat: 0.15, clearcoatRoughness: 0.5, bumpScale: 2.8 },
+  },
+];
+
+export const EXTRAS = [
+  {
+    id: 'nashta', en: 'Shahi Nashta Box', ur: 'شاہی ناشتہ',
+    tag: '2 Sheermaal · 1 Makhni Kulcha · Kulhad Chai',
+    price: 380, cat: 'deal',
+  },
+  {
+    id: 'chai', en: 'Kulhad Chai', ur: 'کلہڑ چائے',
+    tag: 'Mitti ke kulhad mein doodh patti',
+    price: 80, cat: 'deal',
+  },
+];
