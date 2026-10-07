@@ -178,6 +178,7 @@ function createSparks(max) {
   points.frustumCulled = false;
   const vel = new Float32Array(max * 3);
   let next = 0;
+  let dirty = false;
   return {
     points,
     emit(x, y, z, n, spread) {
@@ -193,10 +194,14 @@ function createSparks(max) {
         life[i] = 0.7 + Math.random() * 0.3;
         size[i] = 3 + Math.random() * 5;
       }
+      dirty = true;
     },
     update(dt) {
+      if (!dirty) return;
+      let alive = 0;
       for (let i = 0; i < max; i++) {
         if (life[i] <= 0) continue;
+        alive++;
         life[i] = Math.max(0, life[i] - dt * 1.15);
         vel[i * 3 + 1] += dt * 0.5;
         vel[i * 3] *= 1 - dt * 1.5;
@@ -207,6 +212,7 @@ function createSparks(max) {
       geo.attributes.position.needsUpdate = true;
       geo.attributes.aLife.needsUpdate = true;
       geo.attributes.aSize.needsUpdate = true;
+      dirty = alive > 0;
     },
   };
 }
@@ -235,14 +241,22 @@ export function createHeroFX({ breads, glowTex, steamTex, isTouch, sample }) {
   const line2 = new THREE.Mesh(new THREE.TorusGeometry(1.12, 0.0016, 6, 220), lineMat);
   line2.rotation.x = Math.PI / 2;
   ring.add(line2);
+  // Picking uses an invisible low-poly disc per bread instead of the 13k-vertex mesh.
+  const proxyGeo = new THREE.CylinderGeometry(1.25, 1.25, 0.45, 20);
+  const proxyMat = new THREE.MeshBasicMaterial();
   const minis = breads.map(({ b, tex, geo }, i) => {
     const holder = new THREE.Object3D();
     const mat = breadMaterial(tex, b.mat);
+    mat.emissive.setRGB(0.5, 0.22, 0.04);
+    mat.emissiveIntensity = 0;
     const mesh = new THREE.Mesh(geo, mat);
-    mesh.userData.orbitIndex = i;
+    const proxy = new THREE.Mesh(proxyGeo, proxyMat);
+    proxy.visible = false;
+    proxy.userData.orbitIndex = i;
+    mesh.add(proxy);
     holder.add(mesh);
     ring.add(holder);
-    return { holder, mesh, mat, b, hover: 0, ph: i * 2.1 };
+    return { holder, mesh, mat, b, proxy, hover: 0, ph: i * 2.1 };
   });
 
   // Steam over the freshly baked bread.
@@ -273,15 +287,16 @@ export function createHeroFX({ breads, glowTex, steamTex, isTouch, sample }) {
   const sparks = createSparks(isTouch ? 90 : 220);
   root.add(sparks.points);
 
+  // Added to the scene root by the caller: a light inside a group whose visibility
+  // toggles would change the light count and force every lit shader to recompile.
   const cursorLight = new THREE.PointLight('#ffb366', 0, 7, 1.4);
-  root.add(cursorLight);
 
   let base = 0;
   let speed = 1;
 
   return {
     root, calli, orbit, ring, minis, sparks, cursorLight,
-    pickables: minis.map((m) => m.mesh),
+    pickables: minis.map((m) => m.proxy),
     pulse(x, y) {
       pulse = 1;
       sparks.emit(x, y, 0.6, 26, 0.5);
@@ -330,14 +345,14 @@ export function createHeroFX({ breads, glowTex, steamTex, isTouch, sample }) {
       }
 
       // ---- orbit
-      speed = lerp(speed, s.hoverIdx >= 0 ? 0.15 : 1, 1 - Math.exp(-5 * dt));
-      base += dt * 0.32 * speed;
+      speed = lerp(speed, s.hoverIdx >= 0 ? 0 : 1, 1 - Math.exp(-6 * dt));
+      base += dt * 0.32 * speed * (s.reduce ? 0.3 : 1);
       orbit.visible = k < 0.98;
       orbit.position.set(s.hero.x, s.hero.y, 0);
       ring.rotation.set(0.38 + s.mouse.y * 0.22, 0, -0.3 + s.mouse.x * 0.18);
       if (calli) calli.material.uniforms.uHaloRot.value.setFromMatrix4(_m4.makeRotationFromEuler(ring.rotation));
       const scatter = smooth(0, 0.8, k);
-      const a = s.orbitR * (1 + scatter * 2.2);
+      const a = s.orbitR * (1 + scatter * 1.4);
       line.scale.setScalar(a);
       line2.scale.setScalar(a);
       lineMat.opacity = 0.3 * smooth(2.6, 3.6, it) * (1 - smooth(0, 0.3, k));
@@ -348,11 +363,10 @@ export function createHeroFX({ breads, glowTex, steamTex, isTouch, sample }) {
         const r = a * (1 + (1 - enter) * 2.5);
         m.holder.position.set(Math.cos(th) * r, Math.sin(th * 2 + t * 0.8 + m.ph) * 0.06, Math.sin(th) * r);
         m.hover = lerp(m.hover, s.hoverIdx === i ? 1 : 0, 1 - Math.exp(-10 * dt));
-        const sc = s.miniS * enter * (1 + m.hover * 0.7) * (1 - scatter * 0.6);
+        const sc = s.miniS * enter * (1 + m.hover * 0.7) * (1 - scatter);
         m.holder.scale.setScalar(Math.max(sc, 0.001));
         m.holder.visible = sc > 0.002;
         m.mesh.rotation.set(0.9 + Math.sin(t * 0.7 + m.ph) * 0.5 - m.hover * 0.5, t * 0.8 + m.ph, Math.cos(t * 0.5 + m.ph) * 0.4);
-        m.mat.emissive.setRGB(0.5, 0.22, 0.04);
         m.mat.emissiveIntensity = m.hover * 0.35;
       });
 
@@ -365,6 +379,7 @@ export function createHeroFX({ breads, glowTex, steamTex, isTouch, sample }) {
         const sc = (0.6 + q * 1.6) * s.hero.s;
         p.scale.set(sc, sc, sc);
         p.material.opacity = sa * 0.1 * Math.sin(q * Math.PI);
+        p.visible = p.material.opacity > 0.002;
       }
 
       // ---- sparks + cursor light

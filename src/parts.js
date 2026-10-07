@@ -325,9 +325,8 @@ export function makeTandoor(clayTex, glowTex, flameTex) {
     g.add(f);
     flames.push(f);
   }
+  // The caller adds this light to the scene root so the light count never changes.
   const light = new THREE.PointLight('#ff7a22', 0, 9, 1.6);
-  light.position.y = 1.6;
-  g.add(light);
   g.userData = { innerMat, mouthGlow, flames, light, flameMat };
   return g;
 }

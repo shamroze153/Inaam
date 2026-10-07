@@ -169,6 +169,10 @@ async function boot() {
   const heroMesh = new THREE.Mesh(sheer.geo, storyMat);
   heroHolder.add(heroMesh);
   scene.add(heroHolder);
+  // Invisible low-poly stand-in for raycasts (the real mesh has 13k vertices and a morph target).
+  const heroProxy = new THREE.Mesh(new THREE.CylinderGeometry(1.0, 1.0, 0.42, 24), new THREE.MeshBasicMaterial());
+  heroProxy.visible = false;
+  heroMesh.add(heroProxy);
 
   const saffronMat = new THREE.MeshStandardMaterial({ color: '#a51d0c', emissive: '#4a0802', emissiveIntensity: 0.5, roughness: 0.45 });
   const saffronGeo = new THREE.TubeGeometry(new THREE.CatmullRomCurve3([
@@ -194,6 +198,8 @@ async function boot() {
   const tandoor = P.makeTandoor(clayTex, glowTex, flameTex);
   tandoor.rotation.x = 0.32;
   storyGroup.add(tandoor);
+  const tandoorLight = tandoor.userData.light;
+  scene.add(tandoorLight);
   const ingredients = P.makeIngredients();
   storyGroup.add(ingredients);
 
@@ -216,12 +222,15 @@ async function boot() {
   lineupGroup.add(pedestal);
 
   // ------------------------------------------------------------ hero extras
-  const urduLoaded = [...document.fonts].some((f) => f.family.replace(/["']/g, '') === 'Noto Nastaliq Urdu' && f.status === 'loaded');
+  // fonts.check() is true for an undeclared family too, so also require the face to exist.
+  const urduLoaded = [...document.fonts].some((f) => f.family.replace(/["']/g, '') === 'Noto Nastaliq Urdu')
+    && document.fonts.check('700 340px "Noto Nastaliq Urdu"', 'انعام');
   const calliCount = isTouch ? 5000 : 12000;
   const sample = (urduLoaded && sampleText('انعام', '700 340px "Noto Nastaliq Urdu"', calliCount, 3))
     || sampleText('INAAM', '300px Anton, Impact, sans-serif', calliCount, 3);
   const heroFX = createHeroFX({ breads: breads.slice(1), glowTex, steamTex, isTouch, sample });
   scene.add(heroFX.root);
+  scene.add(heroFX.cursorLight);
   const heroSection = document.getElementById('hero');
   const accentCol = new THREE.Color(BREADS[0].theme.accent);
   const glowCol = new THREE.Color(BREADS[0].theme.glow);
@@ -267,7 +276,7 @@ async function boot() {
     const mobile = aspect < 0.85;
     L = {
       Hw, Ww, mobile,
-      hero: mobile ? { x: 0, y: Hw * 0.2, s: Math.min(0.9, Ww * 0.3) } : { x: Ww * 0.25, y: 0.05, s: Math.min(1.3, Ww * 0.12) },
+      hero: { x: Ww * 0.24, y: 0.05, s: Math.min(1.3, Ww * 0.12, innerHeight < 560 ? 0.95 : 9) },
       story: mobile ? { x: 0, y: Hw * 0.22, s: Math.min(0.85, Ww * 0.3) } : { x: Ww * 0.2, y: 0.15, s: Math.min(1.15, Ww * 0.11) },
       ring: mobile ? { R: 2.2, sx: 0.85, y: 0.85, front: 0.58, z: 0.6 } : { R: 4.0, sx: 1.25, y: 0.72, front: 0.8, z: 0.8 },
       detail: mobile ? { x: 0, y: Hw * 0.25, s: 0.82 } : { x: -Ww * 0.17, y: 0.05, s: 1.5 },
@@ -275,12 +284,25 @@ async function boot() {
       tandoorS: mobile ? 0.55 : 0.72,
     };
     bg.material.uniforms.uAspect.value = aspect;
-    // The calligraphy forms where the bread will pop out, then becomes its ring.
-    L.calli = mobile
-      ? { x: L.hero.x, y: L.hero.y, w: Ww * 0.8, size: 2.0 }
-      : { x: L.hero.x, y: L.hero.y + 0.05, w: Math.min(3.4, Ww * 0.36), size: 2.3 };
-    L.orbitR = mobile ? Ww * 0.42 : 1.85 * L.hero.s;
-    L.miniS = mobile ? 0.17 : 0.27;
+    if (mobile) {
+      // Portrait: fit bread, ring and calligraphy between the nav and the hero copy.
+      const eyebrow = document.querySelector('.hero .eyebrow');
+      const pxPerUnit = innerHeight / Hw;
+      const topPx = 70;
+      const availPx = Math.max(150, (eyebrow ? eyebrow.offsetTop : innerHeight * 0.4) - topPx - 8);
+      const budget = availPx / pxPerUnit;
+      const s = Math.min(0.78, Ww * 0.27, budget * 0.42);
+      L.hero = { x: 0, y: Hw / 2 - (topPx + availPx / 2) / pxPerUnit, s };
+      L.orbitR = Math.min(Ww * 0.38, s * 1.5);
+      L.miniS = 0.2 * s;
+      // The calligraphy is ~0.92 as tall as it is wide, so w = budget keeps it inside the gap.
+      L.calli = { x: 0, y: L.hero.y, w: Math.min(Ww * 0.72, budget), size: 2.0 };
+    } else {
+      // Keep the ring and the hovered (enlarged) minis inside the right edge.
+      L.orbitR = Math.min(1.55 * L.hero.s, (Ww / 2 - L.hero.x - 0.45) / 0.96);
+      L.miniS = 0.25 * Math.min(1.1, L.hero.s);
+      L.calli = { x: L.hero.x, y: L.hero.y + 0.05, w: Math.min(3.4, Ww * 0.36, Hw * 0.62), size: 2.3 };
+    }
   }
 
   function resize() {
@@ -339,7 +361,7 @@ async function boot() {
   });
 
   // Hero: hover/tap the orbiting breads, drag to spin the sheermaal, cursor sparks.
-  const hp = { x: 0, y: 0, active: false, moved: false, mouse: false, lastEmit: 0 };
+  const hp = { x: 0, y: 0, active: false, moved: false, mouse: false, lastEmit: 0, lastPick: 0 };
   const zPlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
   const cursorWorld = new THREE.Vector3(0, 0, 1.2);
   const mouseLocal = new THREE.Vector2(99, 99);
@@ -358,6 +380,7 @@ async function boot() {
       spin.x = e.clientX;
       spin.add += dx * 0.012;
       spinVel = Math.max(-25, Math.min(25, (dx * 0.012) / Math.max((now - spin.t) / 1000, 0.008)));
+      if (Math.abs(dx) > 0) spin.lastMove = now;
       spin.t = now;
       if (Math.abs(e.clientX - spin.x0) > 6) spin.dragged = true;
     }
@@ -372,31 +395,45 @@ async function boot() {
     ndc.set((cx / innerWidth) * 2 - 1, -(cy / innerHeight) * 2 + 1);
     raycaster.setFromCamera(ndc, camera);
   }
+  // Nearest of the hero bread and the minis, so a mini hidden behind the bread is not picked.
+  const pickList = [heroProxy, ...heroFX.pickables];
+  function heroPick() {
+    const hit = raycaster.intersectObjects(pickList, false)[0];
+    if (!hit) return { mini: -1, bread: false };
+    return hit.object === heroProxy ? { mini: -1, bread: true } : { mini: hit.object.userData.orbitIndex, bread: false };
+  }
   window.addEventListener('pointerdown', (e) => {
-    if (!heroLive || e.target.closest('a, button, .cart, .detail')) return;
+    if (!heroLive || document.body.classList.contains('cart-open')) return;
+    if (!e.target.closest('#hero') || e.target.closest('a, button')) return;
     heroRay(e.clientX, e.clientY);
-    heroTap = { x: e.clientX, y: e.clientY };
-    if (raycaster.intersectObject(heroMesh, false).length) {
-      spin = { x: e.clientX, x0: e.clientX, t: performance.now(), add: 0, dragged: false };
+    const downPick = heroPick();
+    heroTap = { x: e.clientX, y: e.clientY, mini: downPick.mini };
+    if (downPick.bread) {
+      const now = performance.now();
+      spin = { x: e.clientX, x0: e.clientX, t: now, lastMove: now, add: 0, dragged: false };
       heroSection.style.cursor = 'grabbing';
     }
   });
   let hop = 0;
   window.addEventListener('pointerup', (e) => {
     if (spin) {
+      // Held still before letting go: no fling.
+      if (performance.now() - spin.lastMove > 90) spinVel = 0;
       if (!spin.dragged && heroLive) {
         hop = 1;
-        spinVel += 14;
+        spinVel = Math.min(25, spinVel + 14);
         heroFX.pulse(heroHolder.position.x, heroHolder.position.y);
       }
       spin = null;
       heroSection.style.cursor = '';
     }
     if (!heroTap || !heroLive) { heroTap = null; return; }
+    const downMini = heroTap.mini;
     heroTap = null;
     heroRay(e.clientX, e.clientY);
-    const hit = raycaster.intersectObjects(heroFX.pickables, false)[0];
-    if (hit) goLineup(hit.object.userData.orbitIndex + 1);
+    const pick = heroPick();
+    const mini = pick.mini >= 0 ? pick.mini : downMini;
+    if (mini >= 0) goLineup(mini + 1);
   });
 
   let lineupPinned = false;
@@ -476,7 +513,8 @@ async function boot() {
 
   // ------------------------------------------------------------ frame loop
   const timer = new THREE.Timer();
-  const introStart = performance.now();
+  // Opened below the hero (reload, deep link): no intro, everything already in place.
+  const introStart = performance.now() - (window.scrollY > innerHeight * 0.5 ? 10000 : 0);
   let sy = window.scrollY;
   let detailT = 0;
   // Adaptive quality: slow GPUs drop to 1x pixels, very slow ones also lose bloom.
@@ -553,6 +591,8 @@ async function boot() {
     by += scrollUp;
     const storyLive = S.off > -1.3;
     heroHolder.visible = storyLive;
+    storyGroup.visible = storyLive;
+    if (!storyLive) tandoorLight.intensity = 0;
     if (storyLive) {
       const tsc = L.tandoorS;
       const mouthY = L.story.y - 1.05 + scrollUp;
@@ -560,7 +600,12 @@ async function boot() {
       tandoor.position.set(L.story.x, tandoorY, -0.3);
       tandoor.scale.setScalar(tsc);
       tandoor.visible = rise > 0.001;
-      if (tandoor.visible) P.updateTandoor(tandoor, t, heat);
+      if (tandoor.visible) {
+        P.updateTandoor(tandoor, t, heat);
+        tandoorLight.position.set(tandoor.position.x, tandoor.position.y + 1.6 * tsc, tandoor.position.z + 0.4);
+      } else {
+        tandoorLight.intensity = 0;
+      }
 
       hop = Math.max(0, hop - dt * 1.7);
       const bob = Math.sin(t * 1.2) * 0.06 * (1 - dip) + Math.sin((1 - hop) * Math.PI) * (hop > 0 ? 0.55 * bs : 0);
@@ -607,8 +652,11 @@ async function boot() {
 
     // ---------------------------------------------------- hero extras
     heroLive = k < 0.6 && S.off > 0;
-    if (hp.moved && (heroLive || it < 3)) {
+    const nowMs = performance.now();
+    const resting = hp.active && hp.mouse && nowMs - hp.lastPick > 120;
+    if ((hp.moved || resting) && nowMs - hp.lastPick > 33 && (heroLive || it < 3)) {
       hp.moved = false;
+      hp.lastPick = nowMs;
       heroRay(hp.x, hp.y);
       zPlane.constant = -1.2;
       raycaster.ray.intersectPlane(zPlane, cursorWorld);
@@ -616,12 +664,13 @@ async function boot() {
       if (raycaster.ray.intersectPlane(zPlane, hitTmp)) mouseLocal.set(hitTmp.x - L.calli.x, hitTmp.y - L.calli.y);
       let h = -1;
       if (hp.mouse && heroLive) {
-        const hit = raycaster.intersectObjects(heroFX.pickables, false)[0];
-        if (hit) h = hit.object.userData.orbitIndex;
-        const overBread = h < 0 && raycaster.intersectObject(heroMesh, false).length > 0;
-        if (!spin) heroSection.style.cursor = h >= 0 ? 'pointer' : overBread ? 'grab' : '';
-        const now = performance.now();
-        if (now - hp.lastEmit > 16) { hp.lastEmit = now; heroFX.sparks.emit(cursorWorld.x, cursorWorld.y, cursorWorld.z, 2, 0.06); }
+        const pick = heroPick();
+        h = pick.mini;
+        if (!spin) heroSection.style.cursor = h >= 0 ? 'pointer' : pick.bread ? 'grab' : '';
+        if (!reduceMotion && !resting && nowMs - hp.lastEmit > 16) {
+          hp.lastEmit = nowMs;
+          heroFX.sparks.emit(cursorWorld.x, cursorWorld.y, cursorWorld.z, 2, 0.06);
+        }
       }
       if (h !== hoverIdx) { hoverIdx = h; ui.setTip(h >= 0 ? BREADS[h + 1] : null); }
       if (h >= 0) ui.moveTip(hp.x, hp.y);
